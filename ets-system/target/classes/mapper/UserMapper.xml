@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ets.mapper.UserMapper" >
+<!--    <resultMap id="BaseResultMap" type="ets.pojo.Dept" >-->
+<!--        <id column="id" property="id" jdbcType="INT" />-->
+<!--        <result column="name" property="name" jdbcType="VARCHAR" />-->
+<!--        <result column="level" property="level" jdbcType="" />-->
+<!--        <result column="parent_id" property="parentId" jdbcType="INT" />-->
+<!--        <result column="parent_dept" property="parentDept" jdbcType="VARCHAR"/>-->
+<!--        <result column="status" property="status" jdbcType="TINYINT"/>-->
+<!--        <result column="created" property="created" jdbcType="DATETIME"/>-->
+<!--        <result column="updated" property="updated" jdbcType="DATETIME"/>-->
+<!--    </resultMap>-->
+    <select id="selectEmpsByPage" resultType="ets.pojo.User">
+        select
+               user.id as id,
+               user.name as name,
+               user.created as created,
+               user.updated as updated,
+               user.code as code,
+               user.password as password,
+               user.gender as gender,
+               user.email as email,
+               user.resident_id as residentId,
+               user.phone as phone,
+               user.status as status,
+               user.picture as picture,
+               user.last_login_date as lastLoginDate,
+               roles.id as roleId,
+               roles.name as roleName,
+               udf.deptId as deptId,
+               udf.deptName as deptName
+        from user
+        left join user_role ur
+        on user.id = ur.user_id
+        left join roles
+        on ur.role_id = roles.id
+        left join (
+            select
+                    u1.id as id,
+                   departments.id as deptId,
+                   departments.name as deptName
+            from user u1
+            left join user_dept ud
+            on u1.id = ud.user_id
+            left join departments
+            on ud.dept_id = departments.id
+        ) udf
+        on user.id = udf.id
+        <where>
+            1=1
+            <if test="status!=null">
+                and user.status = #{status}
+            </if>
+            <if test="deptName!=null">
+                and udf.deptName = #{deptName}
+            </if>
+            <if test="name!=null">
+                and user.name like concat('%',#{name},'%')
+            </if>
+            <if test="code!=null">
+                and user.code = #{code}
+            </if>
+            <if test="roleName!=null">
+                and roles.name = #{roleName}
+            </if>
+            <if test="gender!=null">
+                and user.gender = #{gender}
+            </if>
+        </where>
+        limit #{startIndex},#{pageSize}
+    </select>
+    <select id="countTotal" resultType="java.lang.Long">
+        select count(1)
+        from user
+        left join user_role ur
+        on user.id = ur.user_id
+        left join roles
+        on ur.role_id = roles.id
+        left join (
+            select
+                    u1.id as id,
+                    departments.id as deptId,
+                    departments.name as deptName
+            from user u1
+            left join user_dept ud
+            on u1.id = ud.user_id
+            left join departments
+            on ud.dept_id = departments.id
+            ) udf
+        on user.id = udf.id
+        <where>
+            1=1
+            <if test="status!=null">
+                and user.status = #{status}
+            </if>
+            <if test="deptName!=null">
+                and udf.deptName = #{deptName}
+            </if>
+            <if test="name!=null">
+                and user.name like concat('%',#{name},'%')
+            </if>
+            <if test="code!=null">
+                and user.code = #{code}
+            </if>
+            <if test="roleName!=null">
+                and roles.name = #{roleName}
+            </if>
+            <if test="gender!=null">
+                and user.gender = #{gender}
+            </if>
+        </where>
+    </select>
+    <select id="selectEmpById" resultType="ets.pojo.User">
+        select
+                user.id as id,
+                user.name as name,
+                user.created as created,
+                user.updated as updated,
+                user.code as code,
+                user.password as password,
+                user.gender as gender,
+                user.email as email,
+                user.resident_id as residentId,
+                user.phone as phone,
+                user.status as status,
+                user.picture as picture,
+                user.last_login_date as lastLoginDate,
+                roles.id as roleId,
+                roles.name as roleName,
+                udf.deptId as deptId,
+                udf.deptName as deptName
+        from user
+        left join user_role ur
+        on user.id = ur.user_id
+        left join roles
+        on ur.role_id = roles.id
+        left join (
+            select
+                    u1.id as id,
+                    departments.id as deptId,
+                    departments.name as deptName
+            from user u1
+            left join user_dept ud
+            on u1.id = ud.user_id
+            left join departments
+            on ud.dept_id = departments.id
+            ) udf
+        on user.id = udf.id
+        <where>
+            user.id = #{id} and 1 = 1
+        </where>
+    </select>
+    <select id="selectEmpLogin" resultType="ets.pojo.User">
+        select
+                user.id as id,
+                user.name as name,
+                user.created as created,
+                user.updated as updated,
+                user.code as code,
+                user.password as password,
+                user.gender as gender,
+                user.email as email,
+                user.resident_id as residentId,
+                user.phone as phone,
+                user.status as status,
+                user.picture as picture,
+                user.last_login_date as lastLoginDate,
+                roles.id as roleId,
+                roles.name as roleName,
+                udf.deptId as deptId,
+                udf.deptName as deptName
+        from user
+        left join user_role ur
+        on user.id = ur.user_id
+        left join roles
+        on ur.role_id = roles.id
+        left join (
+                select
+                        u1.id as id,
+                        departments.id as deptId,
+                        departments.name as deptName
+                from user u1
+                left join user_dept ud
+                on u1.id = ud.user_id
+                left join departments
+                on ud.dept_id = departments.id
+                ) udf
+        on user.id = udf.id
+        <where>
+            user.code = #{code} and 1 = 1 and user.password = #{password}
+        </where>
+    </select>
+    <select id="selectEmpByPwd" resultType="ets.pojo.User">
+        select
+                user.id as id,
+                user.name as name,
+                user.created as created,
+                user.updated as updated,
+                user.code as code,
+                user.password as password,
+                user.gender as gender,
+                user.email as email,
+                user.resident_id as residentId,
+                user.phone as phone,
+                user.status as status,
+                user.picture as picture,
+                user.last_login_date as lastLoginDate,
+                roles.id as roleId,
+                roles.name as roleName,
+                udf.deptId as deptId,
+                udf.deptName as deptName
+        from user
+        left join user_role ur
+        on user.id = ur.user_id
+        left join roles
+        on ur.role_id = roles.id
+        left join (
+                select
+                        u1.id as id,
+                        departments.id as deptId,
+                        departments.name as deptName
+                from user u1
+                left join user_dept ud
+                on u1.id = ud.user_id
+                left join departments
+                on ud.dept_id = departments.id
+                ) udf
+        on user.id = udf.id
+        <where>
+            user.id = #{id} and 1 = 1 and user.password = #{password}
+        </where>
+    </select>
+</mapper>

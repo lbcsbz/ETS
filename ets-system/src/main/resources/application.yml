@@ -1,0 +1,44 @@
+server:
+  port: 8091
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://119.23.78.47:3306/ets?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&autuReconnect=true&allowMultiQueries=true
+    username: root
+    password: root
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 20
+      max-lifetime: 60000
+      idle-timeout: 60000
+      connection-timeout: 6000
+      validation-timeout: 3000
+      login-timeout: 60
+  redis:
+    database: 0
+    host: 119.23.78.47
+    port: 6379
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+    timeout: 2000ms
+  cache:
+    redis:
+      time-to-live: 1d
+      use-key-prefix: true
+mybatis-plus:
+  type-aliases-package: com.jt.pojo
+  mapper-locations:
+#    - classpath:/mybatis/*.xml
+    - classpath:/mapper/*Mapper.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    ets: debug
+#debug: false

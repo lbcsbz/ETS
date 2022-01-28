@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ets.mapper.DeptMapper" >
+<!--    <resultMap id="BaseResultMap" type="ets.pojo.Dept" >-->
+<!--        <id column="id" property="id" jdbcType="INT" />-->
+<!--        <result column="name" property="name" jdbcType="VARCHAR" />-->
+<!--        <result column="level" property="level" jdbcType="" />-->
+<!--        <result column="parent_id" property="parentId" jdbcType="INT" />-->
+<!--        <result column="parent_dept" property="parentDept" jdbcType="VARCHAR"/>-->
+<!--        <result column="status" property="status" jdbcType="TINYINT"/>-->
+<!--        <result column="created" property="created" jdbcType="DATETIME"/>-->
+<!--        <result column="updated" property="updated" jdbcType="DATETIME"/>-->
+<!--    </resultMap>-->
+    <select id="selectDeptsByPage" resultType="ets.pojo.Dept">
+        select
+               d1.id as id,
+               d1.name as name,
+               d1.level as level,
+               d1.parent_id as parent_id,
+               d1.created as created,
+               d1.updated as updated,
+               d1.status as status,
+               d2.name as parent_dept
+        from departments d1
+        left join departments d2
+        on d1.parent_id = d2.id
+        <where>
+            1=1
+            <if test="status!=null">
+                and d1.status = #{status}
+            </if>
+            <if test="level!=null">
+                and d1.level = #{level}
+            </if>
+            <if test="name!=null">
+                and d1.name like concat('%',#{name},'%')
+            </if>
+        </where>
+        limit #{startIndex},#{pageSize}
+    </select>
+    <select id="countTotal" resultType="java.lang.Long">
+        select count(1)
+        from departments d1
+        left join departments d2
+        on d1.parent_id = d2.id
+        <where>
+            1=1
+            <if test="status!=null">
+                and d1.status = #{status}
+            </if>
+            <if test="level!=null">
+                and d1.level = #{level}
+            </if>
+            <if test="name!=null">
+                and d1.name like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+    <select id="selectDeptById" resultType="ets.pojo.Dept">
+        select
+        d1.id as id,
+        d1.name as name,
+        d1.level as level,
+        d1.parent_id as parent_id,
+        d1.created as created,
+        d1.updated as updated,
+        d1.status as status,
+        d2.name as parent_dept
+        from departments d1
+        left join departments d2
+        on d1.parent_id = d2.id
+        <where>
+            d1.id = #{id} and 1 = 1
+        </where>
+    </select>
+</mapper>
